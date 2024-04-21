@@ -26,7 +26,7 @@ const Home = () => {
     Alert.alert('Remover',`Confirmar remoção de "${text}"?`, [
       {
         text: 'Sim',
-        onPress: () => Alert.alert('Deletado!')
+        onPress: () => setLists(prevState => prevState.filter(list => list.nome !== text))
       },
       {
         text: 'Não',
