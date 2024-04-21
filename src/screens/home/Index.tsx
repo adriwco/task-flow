@@ -1,27 +1,24 @@
 import { View, Text, TextInput, TouchableOpacity, FlatList, Alert } from "react-native"
 import { styles } from "./Styles"
 import Participant from "../../components/participant/Participant"
+import { useState  } from "react"
 
 const Home = () => {
-  const participants = [
-    {"id": 1, "nome": "Alice"},
-    {"id": 2, "nome": "Bob"},
-    {"id": 3, "nome": "Carol"},
-    {"id": 4, "nome": "David"},
-    {"id": 5, "nome": "Eve"},
-    {"id": 6, "nome": "Frank"},
-    {"id": 7, "nome": "Grace"},
-    {"id": 8, "nome": "Hank"},
-    {"id": 9, "nome": "Ivy"},
-    {"id": 10, "nome": "Jack"},
-    {"id": 11, "nome": "Katie"},
-    {"id": 12, "nome": "Liam"},
-    {"id": 13, "nome": "Mia"}
-  ]
+  const [lists, setLists] = useState<{ id: number; nome: string; }[]>([]);
+  const [texto, setTexto] = useState<string>('');
+
+  function generateNewId(): number {
+    const maxId = lists.length > 0 ? Math.max(...lists.map(list => list.id)) : 0;
+    return maxId === -Infinity ? 0 : maxId + 1;
+  }
 
   function handleParticipantAdd(){
-    if(participants.some(item => item.nome === "Mia")){
-      return Alert.alert('Nome Existente.','O nome já existe.')
+    if(texto != ''){
+      if (lists.some(item => item.nome === texto)) {
+        return Alert.alert('Nome Existente.','O nome já existe.');
+      }
+      setLists(prevState => [...prevState, { id: generateNewId(), nome: texto }]);
+      setTexto('');
     }
   }
   
@@ -40,7 +37,7 @@ const Home = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.eventName}>To Do: Lists & Tasks</Text>
+      <Text style={styles.eventName}>To Do: Listss & Tasks</Text>
       <Text style={styles.eventDate}>Primeiro contato: react-native/ts.</Text>
 
       <View style={styles.form}>
@@ -48,6 +45,8 @@ const Home = () => {
           style={styles.input} 
           placeholder="Digite aqui..."
           placeholderTextColor="#6b6b6b"
+          onChangeText={setTexto}
+          value={texto}
         /> 
 
         <TouchableOpacity style={styles.button} onPress={handleParticipantAdd}>
@@ -56,7 +55,7 @@ const Home = () => {
       </View>
 
       <FlatList
-        data={participants}
+        data={lists}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
             <Participant 
